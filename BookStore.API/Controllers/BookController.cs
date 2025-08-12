@@ -1,0 +1,56 @@
+﻿using BookStore.API.Contracts;
+using BookStore.Core.Models;
+using Microsoft.AspNetCore.Mvc;
+using BookStore.BusinessLogic.Services; 
+
+namespace BookStore.API.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class BookController : ControllerBase
+    {
+        private readonly IBookService _bookService;
+        public BookController(IBookService bookService)
+        {
+            _bookService = bookService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<BookResponse>>> GetBooks()
+        {
+            var books = await _bookService.GetBooks();
+            var response = books.Select(x => new BookResponse(x.Id, x.Author, x.Title, x.Description, x.CreatAt));
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Guid>> AddBook([FromBody] BookRequest bookRequest)
+        {
+            var (book, error) = Book.Creator(
+                Guid.NewGuid(), bookRequest.Title, bookRequest.Author, bookRequest.Description, bookRequest.CreatAt);
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                return BadRequest(error);
+            }
+            var bookID = await _bookService.CreateBook(book);
+            return Ok(bookID);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult<Guid>> DeleteBook(Guid id)
+        {
+            var bookId = await _bookService.DeleteBook(id);
+            return Ok(bookId);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult<Guid>> UpdateBook(Guid id, [FromBody] BookRequest bookRequest)
+        {
+            var bookId = await _bookService.UpdateBook(id, bookRequest.Author, bookRequest.Title, bookRequest.Description, bookRequest.CreatAt);
+            return Ok(bookId);
+        }
+
+    }
+}
+
