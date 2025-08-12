@@ -39,6 +39,40 @@ namespace BookStore.DataAccess.Repository
             return entity.Id;
         }
 
+        public async Task<List<Book>> GetWithFilter(string search, string sortItem, string sortBy)
+        {
+            // sortItem -- "title", "author", "creatat"
+            // sortBy -- "asc" или "desc"
+
+            var entities = _context.Books.AsQueryable().AsNoTracking();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                entities = entities.Where(x =>
+                    x.Title.Contains(search) ||
+                    x.Author.Contains(search) ||
+                    x.Description.Contains(search));
+            }
+
+            entities = (sortItem?.ToLower(), sortBy?.ToLower()) switch
+            {
+                ("title", "asc") => entities.OrderBy(x => x.Title),
+                ("title", "desc") => entities.OrderByDescending(x => x.Title),
+                ("author", "asc") => entities.OrderBy(x => x.Author),
+                ("author", "desc") => entities.OrderByDescending(x => x.Author),
+                ("date", "asc") => entities.OrderBy(x => x.CreatAt),
+                ("date", "desc") => entities.OrderByDescending(x => x.CreatAt),
+                (_, "asc") => entities.OrderBy(x => x.Id),
+                _ => entities.OrderByDescending(x => x.Id)
+            };
+
+            var books = await entities
+                .Select(b => Book.Creator(b.Id, b.Title, b.Author, b.Description, b.CreatAt).book)
+                .ToListAsync();
+            return books;
+
+        }
+
         public async Task<Guid> Update(Guid id, string title, string author, string description, DateTime dateTime)
         {
             await _context.Books
