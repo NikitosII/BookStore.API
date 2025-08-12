@@ -23,6 +23,18 @@ namespace BookStore.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("filter")]
+        public async Task<ActionResult<List<BookResponse>>> GetBooksWithFilter([FromQuery] BookSearchParams searchParams)
+        {
+            var books = await _bookService.GetBooksWithFilters(
+                searchParams.search,
+                searchParams.sortitem,
+                searchParams.sortBy);
+
+            var response = books.Select(x => new BookResponse(x.Id, x.Author, x.Title, x.Description, x.CreatAt));
+            return Ok(response);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Guid>> AddBook([FromBody] BookRequest bookRequest)
         {
