@@ -31,6 +31,11 @@ namespace BookStore.BusinessLogic.Services
             return await _bookRepository.Update(id, title, description, author, dateTime);
         }
 
+        public async Task<List<Book>> GetBooksWithFilters(string search, string sortItem, string sortBy)
+        {
+            return await _bookRepository.GetWithFilter(search, sortItem, sortBy);
+        }
+
     }
 }
 

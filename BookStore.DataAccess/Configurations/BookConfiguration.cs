@@ -13,7 +13,7 @@ namespace BookStore.DataAccess.Configurations
             builder.Property(x => x.Title)
                 .IsRequired().HasMaxLength(Book.Max_Length_Title);
             builder.Property(x => x.Author).IsRequired();
-            builder.Property(x => x.Description).IsRequired();  // IsRequired ?
+            builder.Property(x => x.Description).IsRequired();  
             builder.Property(x => x.CreatAt).IsRequired();
 
         }
