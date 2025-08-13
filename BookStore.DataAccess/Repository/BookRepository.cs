@@ -90,11 +90,6 @@ namespace BookStore.DataAccess.Repository
                    .SetProperty(b => b.Author, b => author)
                     .SetProperty(b => b.Description, b => description)
                     .SetProperty(b => b.CreatAt, b => dateTime));
-
-            if (updated == 0)
-            {
-                throw new KeyNotFoundException($"Book with ID {id} not found.");
-            }
             return id;
         }
 
@@ -103,10 +98,6 @@ namespace BookStore.DataAccess.Repository
             var deleted = await _context.Books
                 .Where(x => x.Id == id)
                 .ExecuteDeleteAsync();
-            if (deleted == 0)
-            {
-                throw new KeyNotFoundException($"Book with ID {id} not found.");
-            }
             return id;
         }
     }
