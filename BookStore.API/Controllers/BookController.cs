@@ -36,7 +36,7 @@ namespace BookStore.API.Controllers
             if (!string.IsNullOrEmpty(searchParams.sortitem))
             {
                 var SortItems = new[] { "title", "author", "date", "id" };
-                if (!SortItems.Contains(searchParams.sortitem.ToLower()))
+                if (!SortItems.Contains(searchParams.sortitem.ToLower().Trim()))
                 {
                     return BadRequest($"Invalid sort item. Valid values are: {string.Join(", ", SortItems)}");
                 }
@@ -45,14 +45,14 @@ namespace BookStore.API.Controllers
             if (!string.IsNullOrEmpty(searchParams.sortBy))
             {
                 var SortOrders = new[] { "asc", "desc" };
-                if (!SortOrders.Contains(searchParams.sortBy.ToLower()))
+                if (!SortOrders.Contains(searchParams.sortBy.ToLower().Trim()))
                 {
                     return BadRequest($"Invalid sort order. Valid values are: {string.Join(", ", SortOrders)}");
                 }
             }
 
             var book = await _bookService.GetBooksWithFilters(
-                searchParams.search,
+                searchParams.search.Trim(),
                 searchParams.sortitem,
                 searchParams.sortBy);
 
