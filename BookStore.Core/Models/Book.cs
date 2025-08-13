@@ -20,14 +20,28 @@
 
         public static (Book book, string Error) Creator(Guid Id, string Author, string Title, string Description, DateTime CreatAt)
         {
-            var error = string.Empty;
+            var error = new List<string>();
             if (string.IsNullOrEmpty(Title) || Title.Length > Max_Length_Title)
             {
-                error = "Error: The title of the book can't be empty or more than 100 characters long.";
+                error.Add($"Error: The title of the book can't be empty or more than {Max_Length_Title} characters long.");
 
             }
+            if (string.IsNullOrEmpty(Author) || Author.Length > Max_Length_Author)
+            {
+                error.Add($"Error: the Author field can't be empty or more than {Max_Length_Author} characters long.");
+
+            }
+            if (Description.Length > Max_Length_Description)
+            {
+                error.Add($"Error: the Description field can't be more than {Max_Length_Description} characters long.");
+            }
+            if (CreatAt > DateTime.Now)
+            {
+                error.Add("Creation date cannot be in the future.");
+            }
+
             var book = new Book(Id, Author, Title, Description, CreatAt);
-            return (book, error);
+            return (book, string.Empty);
         }
 
     }
