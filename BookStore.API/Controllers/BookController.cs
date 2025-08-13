@@ -26,12 +26,37 @@ namespace BookStore.API.Controllers
         [HttpGet("filter")]
         public async Task<ActionResult<List<BookResponse>>> GetBooksWithFilter([FromQuery] BookSearchParams searchParams)
         {
-            var books = await _bookService.GetBooksWithFilters(
+            if (string.IsNullOrEmpty(searchParams.search) && string.IsNullOrEmpty(searchParams.sortitem) && string.IsNullOrEmpty(searchParams.sortBy))
+            {
+                var allBooks = await _bookService.GetBooks();
+                var books = allBooks.Select(x => new BookResponse(x.Id, x.Author, x.Title, x.Description, x.CreatAt));
+                return Ok(books);
+            }
+
+            if (!string.IsNullOrEmpty(searchParams.sortitem))
+            {
+                var SortItems = new[] { "title", "author", "date", "id" };
+                if (!SortItems.Contains(searchParams.sortitem.ToLower()))
+                {
+                    return BadRequest($"Invalid sort item. Valid values are: {string.Join(", ", SortItems)}");
+                }
+            }
+
+            if (!string.IsNullOrEmpty(searchParams.sortBy))
+            {
+                var SortOrders = new[] { "asc", "desc" };
+                if (!SortOrders.Contains(searchParams.sortBy.ToLower()))
+                {
+                    return BadRequest($"Invalid sort order. Valid values are: {string.Join(", ", SortOrders)}");
+                }
+            }
+
+            var book = await _bookService.GetBooksWithFilters(
                 searchParams.search,
                 searchParams.sortitem,
                 searchParams.sortBy);
 
-            var response = books.Select(x => new BookResponse(x.Id, x.Author, x.Title, x.Description, x.CreatAt));
+            var response = book.Select(x => new BookResponse(x.Id, x.Author, x.Title, x.Description, x.CreatAt));
             return Ok(response);
         }
 
@@ -59,6 +84,11 @@ namespace BookStore.API.Controllers
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<Guid>> UpdateBook(Guid id, [FromBody] BookRequest bookRequest)
         {
+            var (book, error) = Book.Creator(Guid.NewGuid(), bookRequest.Title, bookRequest.Author, bookRequest.Description, bookRequest.CreatAt);
+            if (!string.IsNullOrEmpty(error))
+            {
+                return BadRequest(error);
+            }
             var bookId = await _bookService.UpdateBook(id, bookRequest.Author, bookRequest.Title, bookRequest.Description, bookRequest.CreatAt);
             return Ok(bookId);
         }

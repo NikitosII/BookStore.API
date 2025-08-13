@@ -21,7 +21,7 @@
             this.CreatAt = CreatAt;
         }
 
-        public static (Book book, string Error) Creator(Guid Id, string Author, string Title, string Description, DateTime CreatAt)
+        public static (Book? book, string Error) Creator(Guid Id, string Author, string Title, string Description, DateTime CreatAt)
         {
             var error = new List<string>();
             if (string.IsNullOrEmpty(Title) || Title.Length > Max_Length_Title)
@@ -42,8 +42,12 @@
             {
                 error.Add("Creation date cannot be in the future.");
             }
+            if (error.Any())
+            {
+                return (null, string.Join(Environment.NewLine, error));
+            }
 
-            var book = new Book(Id, Author, Title, Description, CreatAt);
+            var book = new Book(Id, Author.Trim(), Title.Trim(), Description, CreatAt);
             return (book, string.Empty);
         }
 
