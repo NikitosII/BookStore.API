@@ -3,6 +3,9 @@
     public class Book
     {
         public const int Max_Length_Title = 100;
+        public const int Max_Length_Author = 50;
+        public const int Max_Length_Description = 500;
+
         public Guid Id { get; init; }
         public string Title { get; init; } = string.Empty;
         public string Description { get; init; } = string.Empty;
