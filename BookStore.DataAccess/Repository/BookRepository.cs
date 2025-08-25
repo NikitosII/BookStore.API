@@ -2,7 +2,6 @@
 using BookStore.Core.Models;
 using BookStore.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BookStore.DataAccess.Repository
 {

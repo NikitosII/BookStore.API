@@ -17,21 +17,33 @@ builder.Services.AddDbContext<BookDbContext>(options =>
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
 
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-/*if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}*/
-app.UseSwagger();
-app.UseSwaggerUI();
+}
+app.UseCors("AllowReactApp");
+
+app.UseHttpsRedirection();
 
 app.MapControllers();
-app.UseDeveloperExceptionPage();
-//app.MapGet("/", () => "Welcome to Library API!");
+
+
 app.Run();
 
