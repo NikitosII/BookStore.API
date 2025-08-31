@@ -10,7 +10,7 @@
         public string Title { get; init; } = string.Empty;
         public string Description { get; init; } = string.Empty;
         public string Author { get; init; } = string.Empty;
-        public DateTime CreatAt { get; init; } = DateTime.Now;
+        public DateTime CreatAt { get; init; }
 
         private Book(Guid Id, string Author, string Title, string Description, DateTime CreatAt)
         {

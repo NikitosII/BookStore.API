@@ -63,8 +63,10 @@ namespace BookStore.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Guid>> AddBook([FromBody] BookRequest bookRequest)
         {
+            var createAt = DateTime.UtcNow;
+
             var (book, error) = Book.Creator(
-                Guid.NewGuid(), bookRequest.Title, bookRequest.Author, bookRequest.Description, bookRequest.CreatAt);
+                Guid.NewGuid(), bookRequest.Title, bookRequest.Author, bookRequest.Description, createAt);
 
             if (!string.IsNullOrEmpty(error))
             {
